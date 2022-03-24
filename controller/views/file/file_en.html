@@ -1,0 +1,47 @@
+<div class="view">
+  <div class="view-title">
+    {{ shortName }}
+  </div>
+
+  <div class="view-title-action" v-if="type !== 'download'">
+    <button class="light" @click="project()">
+      <i class="material-icons">cast</i>
+    </button>
+    <button class="light" @click="save()">
+      <i class="material-icons">save</i>
+    </button>
+  </div>
+
+  <div class="file-container"
+    @dragenter.stop.prevent
+    @dragover.stop.prevent="dragover"
+    @dragleave.stop.prevent="dragleave"
+    @dragend="dragend"
+    @drop.stop.prevent="drop"
+    
+    @scroll="scroll">
+    <div class="file-pdf" ref="pages" v-show="type === 'pdf'">
+    </div>
+
+    <div class="file-image" v-if="type === 'image'">
+      <img :src="imgRendered">
+    </div>
+
+    <div class="file-markdown" v-if="type === 'markdown'">
+      <div class="file-markdown-rendered" v-html="mdRendered"></div>
+    </div>
+
+    <div class="file-download" v-if="type === 'download'">
+      <button @click="save"><i class="material-icons">save</i>Save</button>
+    </div>
+  </div>
+
+  <transition name="opacity">
+    <div class="dnd-mask dnd-edit" v-show="dragging">
+      <i class="dnd-icon material-icons">edit</i>
+      <div class="dnd-hint">Drag to update</div>
+    </div>
+  </transition>
+
+  <div class="inset-shadow"></div>
+</div>
