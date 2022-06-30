@@ -1,0 +1,95 @@
+<div class="view">
+  <div class="view-title">{{ title }}</div>
+  <div class="view-pagetitle clickable" @click="navigateTo('lists')">Active speakers' list(s)</div>
+  <div class="list inline">
+    <div class="list-item clickable"
+      v-for="list of filteredLists"
+      :class="{ bold: list.timerCurrent && list.timerCurrent.active }"
+      @click="viewList(list)">
+      <div class="list-item-indicator"></div>
+      <div class="list-item-content list-row">
+        <div class="list-name">
+          {{ list.name }}
+        </div>
+
+        <div class="list-speakers">
+          <div class="list-speakers-current" v-if="list.ptr < list.seats.length">{{ list.seats[list.ptr].name }}</div>
+          <div class="list-speakers-next" v-if="list.ptr < list.seats.length - 1">{{ list.seats[list.ptr + 1].name }}</div>
+        </div>
+
+        <template v-if="list.timerCurrent">
+          <div class="list-timer-icon">
+            <i class="material-icons">person</i>
+          </div>
+          <div class="timer-value-wrapper list-timer">
+            <timer class="timer-left" :time="list.timerCurrent.left"></timer>
+            <span class="timer-value-separator">/</span>
+            <timer class="timer-value" :time="list.timerCurrent.value"></timer>
+          </div>
+        </template>
+
+        <template v-if="list.timerTotal && list.timerTotal.value > 0">
+          <div class="list-timer-icon">
+            <i class="material-icons">access_time</i>
+          </div>
+          <div class="timer-value-wrapper list-timer">
+            <timer class="timer-left" :time="list.timerTotal.left"></timer>
+            <span class="timer-value-separator">/</span>
+            <timer class="timer-value" :time="list.timerTotal.value"></timer>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div class="list-item empty-hint">No active speakers' lists</div>
+  </div>
+  <div class="view-pagetitle clickable" @click="navigateTo('timers')">Active timer(s)</div>
+  <div class="list inline">
+    <div class="list-item clickable" v-for="timer of filteredTimers" @click="gotoTimer(timer.name)">
+      <div class="list-item-indicator"></div>
+      <div class="list-item-content timer-row">
+        <div class="timer-name">
+          {{ timer.name }}
+        </div>
+        <div class="timer-value-wrapper">
+          <timer class="timer-left" :time="timer.left"></timer>
+          <span class="timer-value-separator">/</span>
+          <timer class="timer-value" :time="timer.value"></timer>
+        </div>
+      </div>
+    </div>
+    <div class="list-item empty-hint">No active timers</div>
+  </div>
+  <div class="view-pagetitle clickable" @click="navigateTo('votes')">Active ballot(s)</div>
+  <div class="list inline">
+    <div class="list-item clickable"
+      v-for="vote of filteredVotes"
+      :class="{ bold: vote.status.running }"
+      @click="viewVote(vote)">
+
+      <div class="list-item-indicator"></div>
+      <div class="list-item-content vote-row">
+        <div class="vote-name">
+          {{ vote.name }}
+        </div>
+        <div class="vote-rounds-wrapper">
+          <span class="vote-iteration" v-show="vote.status.iteration > 0">{{ vote.status.iteration }}</span>
+          <span class="vote-iteration" v-show="vote.status.iteration === 0">Not started</span>
+          <template v-if="vote.rounds > 0">
+            <span class="vote-rounds-separator">/</span>
+            <span class="vote-rounds">{{ vote.rounds }}</span>
+          </template>
+        </div>
+        <div class="vote-values">
+          <span class="vote-value positive">{{ countVotes(vote, 1) }}</span>
+          <span class="vote-value-separator">/</span>
+          <span class="vote-value negative">{{ countVotes(vote, -2) }}</span>
+          <span class="vote-value-separator">/</span>
+          <span class="vote-value abstained">{{ countVotes(vote, -1) }}</span>
+          <span class="vote-value-separator" v-if="vote.target > 0">/</span>
+          <span class="vote-value target" v-if="vote.target > 0">{{ vote.target }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="list-item empty-hint">No active ballots</div>
+  </div>
+</div>
