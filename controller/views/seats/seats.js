@@ -21,7 +21,6 @@ const SeatsView = Vue.extend({
     performEditing() {
       const rstr = this.$refs.seatsInput.innerHTML;
       const str = rstr.replace(/<div>/g, '').replace(/<\/div>/g, '<br>')
-      console.log(str);
       const seats = str.split('<br>')
         .filter(e => e.length > 0)
         .map(e => ({ name: e, present: false }));
